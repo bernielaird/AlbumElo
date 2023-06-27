@@ -2,7 +2,6 @@ import random
 import math
 import pickle
 import re
-import time
 
 def Probability(rating1, rating2):
     return 1.0 * 1.0 / (1 + 1.0 * math.pow(10, 1.0 * (rating1 - rating2) / 400))
@@ -55,11 +54,11 @@ def Updater(scores):
     
 
 def saver(scores):
-    with open('saved_dictionary.pkl', 'wb') as f:
+    with open('album_rankings.pkl', 'wb') as f:
         pickle.dump(scores, f)
 
 def loader():
-    with open('saved_dictionary.pkl', 'rb') as f:
+    with open('album_rankings.pkl', 'rb') as f:
         scores = pickle.load(f)
     return scores
             
@@ -74,10 +73,10 @@ def printScores(scores):
 
 def addNewAlbum(scores):
     stop = 'yes'
-    while stop == 'yes':
+    while stop.lower() == 'yes':
         newKey = input(f'What Album Would You Like to Add: ')
         scores[newKey] = 1000
-        stop = input(f'Would you like to add another ablum? (Yes to continue): ')
+        stop = input(f'Would you like to add another album? (Yes to continue, Stop to Stop): ')
 
 def resetScores(scores):
     for i in scores.keys():
@@ -95,10 +94,17 @@ def deleteAlbum(scores):
             print('Album has been deleted')
         else:
             print('Album not found in your list, please try again')
-        stop = input('Would you like to delete another album from your list: ')
+        stop = input('Would you like to delete another album from your list (Yes to continue, Stop to Stop): ')
 
 def main():
-    scores = loader()
+    try:
+        scores = loader()
+    except:
+        scores = {}
+        while len(scores.keys()) <= 1:
+            print(f'Please add at least two albums to begin your album list')
+            addNewAlbum(scores)
+        saver(scores)
     choice = ''
     while choice != '9':
         print('1: Do album battles\n2: Print your current Rankings\n3: Add a new Album\n4: Reset your Scores\n5: Delete an Album')
@@ -114,7 +120,7 @@ def main():
                 addNewAlbum(scores)
             case '4':
                 resetScores(scores)
-                time.sleep(1)
+                input('Enter any key to continue: ')
             case '5':
                 deleteAlbum(scores)
             case '9':
@@ -123,8 +129,6 @@ def main():
         
         
     
-
-if __name__ == '__main__':
-    main()
+main()
 
 
